@@ -8,6 +8,10 @@
   margin: 0 auto;
 }
 
+.profile__image {
+  background-image: url('../../../images/avatar.jpg');
+}
+
 @media screen and (max-width: 1140px) {
   .page__section {
     width: calc(100% - 40px);
