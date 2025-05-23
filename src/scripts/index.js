@@ -1,9 +1,10 @@
 import '../pages/index.css';
-import { initialCards, createCard, deleteCardHandler, likeCardHandler } from './card.js';
+import { createCard, deleteCardHandler, likeCardHandler } from './card.js';
+import { openModal, closeModal } from './modal.js';
+import { initialCards } from './cards.js';
 
 const cardsContainer = document.querySelector('.places__list');
 const cardTemplate = document.querySelector('#card-template').content;
-const popups =document.querySelectorAll('.popup');
 
 // Edit profile popup
 const editProfileButton = document.querySelector('.profile__edit-button');
@@ -32,8 +33,8 @@ cardsContainer.addEventListener('click', (evt) => {
   } else if (evt.target.classList.contains('card__like-button')) {
     likeCardHandler(evt);
   } else if (evt.target.classList.contains('card__image')) {
-    popupImage.classList.add('popup_is-opened');
-    imageBig.src =evt.target.src;
+    openModal(popupImage);
+    imageBig.src = evt.target.src;
     imageCaption.textContent = evt.target.closest('.card').textContent;
 }});
 
@@ -42,43 +43,25 @@ initialCards.forEach((item) => {
 });
 
 
+// Edit profile
+
 editProfileButton.addEventListener('click', () => {
-  popupEditProfile.classList.add('popup_is-opened');
+  openModal(popupEditProfile);
   inputName.value = profileName.textContent;
   inputJob.value = profileJob.textContent;
 });
-
 
 profileForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   profileName.textContent = inputName.value;
   profileJob.textContent = inputJob.value;
-  popupEditProfile.classList.remove('popup_is-opened');
+  closeModal(popupEditProfile);
 });
 
-
-popups.forEach((popup) => {
-  popup.classList.add('popup_is-animated');
-  popup.addEventListener('click', (evt) => {
-    if (evt.target.classList.contains('popup_is-opened') || evt.target.classList.contains('popup__close')) {
-      popup.classList.remove('popup_is-opened');
-    }
-  });
-});
-
-
-document.addEventListener('keydown', (evt) => {
-  if (evt.key === 'Escape') {
-    popups.forEach((popup) => {
-      if (popup.classList.contains('popup_is-opened')) {
-        popup.classList.remove('popup_is-opened');
-      }
-    });
-  }
-});
+// Add new card
 
 addButton.addEventListener('click', () => {
-  popupAddCard.classList.add('popup_is-opened');
+  openModal(popupAddCard);
 });
 
 addForm.addEventListener('submit', (evt) => {
@@ -88,6 +71,6 @@ addForm.addEventListener('submit', (evt) => {
     link: inputLink.value
   };
   cardsContainer.prepend(createCard(cardTemplate, newCard));
-  popupAddCard.classList.remove('popup_is-opened');
+  closeModal(popupAddCard);
   addForm.reset();
 });
