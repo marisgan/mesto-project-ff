@@ -1,5 +1,5 @@
 import '../pages/index.css';
-import { createCard, deleteCardHandler, likeCardHandler } from './card.js';
+import { createCard, openCard, likeCard, deleteCard } from './card.js';
 import { openModal, closeModal } from './modal.js';
 import { initialCards } from './cards.js';
 
@@ -15,33 +15,17 @@ const profileForm = document.querySelector('.popup_type_edit form');
 const inputName = document.querySelector('.popup__input_type_name');
 const inputJob = document.querySelector('.popup__input_type_description');
 
-// Add card popup
+// Add new card popup
 const addButton = document.querySelector('.profile__add-button');
 const addForm = document.querySelector('.popup_type_new-card form');
 const inputPlace = document.querySelector('.popup__input_type_card-name');
 const inputLink = document.querySelector('.popup__input_type_url');
 const popupAddCard = document.querySelector('.popup_type_new-card');
 
-// Image popup
-const popupImage = document.querySelector('.popup_type_image');
-const imageBig = document.querySelector('.popup__image');
-const imageCaption = document.querySelector('.popup__caption');
-
-cardsContainer.addEventListener('click', (evt) => {
-  if (evt.target.classList.contains('card__delete-button')) {
-    deleteCardHandler(evt);
-  } else if (evt.target.classList.contains('card__like-button')) {
-    likeCardHandler(evt);
-  } else if (evt.target.classList.contains('card__image')) {
-    openModal(popupImage);
-    imageBig.src = evt.target.src;
-    imageCaption.textContent = evt.target.closest('.card').textContent;
-}});
 
 initialCards.forEach((item) => {
-  cardsContainer.append(createCard(cardTemplate, item));
+  cardsContainer.append(createCard(cardTemplate, item, openCard, likeCard, deleteCard));
 });
-
 
 // Edit profile
 
@@ -70,7 +54,7 @@ addForm.addEventListener('submit', (evt) => {
     name: inputPlace.value,
     link: inputLink.value
   };
-  cardsContainer.prepend(createCard(cardTemplate, newCard));
+  cardsContainer.prepend(createCard(cardTemplate, newCard, openCard, likeCard, deleteCard));
   closeModal(popupAddCard);
   addForm.reset();
 });
