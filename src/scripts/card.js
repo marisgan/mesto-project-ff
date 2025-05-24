@@ -1,4 +1,6 @@
-function createCard(cardTemplate, cardData, likeCard, deleteCard) {
+const cardTemplate = document.querySelector('#card-template').content;
+
+function createCard(cardData, openCard, likeCard, deleteCard) {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = cardElement.querySelector('.card__image');
   const cardTitle = cardElement.querySelector('.card__title');
@@ -9,6 +11,9 @@ function createCard(cardTemplate, cardData, likeCard, deleteCard) {
   cardImage.alt ='Изображение места: ${cardData.name}';
   cardTitle.textContent = cardData.name;
 
+  cardImage.addEventListener('click', (evt) => {
+    openCard(evt);
+  });
   cardLikeButton.addEventListener('click', (evt) => {
     likeCard(evt);
   });

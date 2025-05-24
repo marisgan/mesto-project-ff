@@ -4,7 +4,6 @@ import { openModal, closeModal } from './modal.js';
 import { initialCards } from './cards.js';
 
 const cardsContainer = document.querySelector('.places__list');
-const cardTemplate = document.querySelector('#card-template').content;
 
 // Edit profile popup
 const editProfileButton = document.querySelector('.profile__edit-button');
@@ -34,14 +33,8 @@ function openCard(evt) {
   imageCaption.textContent = evt.target.closest('.card').textContent;
 }
 
-cardsContainer.addEventListener('click', (evt) => {
-  if (evt.target.classList.contains('card__image')) {
-    openCard(evt);
-  }
-});
-
 initialCards.forEach((item) => {
-  cardsContainer.append(createCard(cardTemplate, item, likeCard, deleteCard));
+  cardsContainer.append(createCard(item, openCard, likeCard, deleteCard));
 });
 
 // Edit profile
@@ -71,7 +64,7 @@ addForm.addEventListener('submit', (evt) => {
     name: inputPlace.value,
     link: inputLink.value
   };
-  cardsContainer.prepend(createCard(cardTemplate, newCard, openCard, likeCard, deleteCard));
+  cardsContainer.prepend(createCard(newCard, openCard, likeCard, deleteCard));
   closeModal(popupAddCard);
   addForm.reset();
 });
