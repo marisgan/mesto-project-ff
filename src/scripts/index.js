@@ -1,5 +1,5 @@
 import '../pages/index.css';
-import { createCard, openCard, likeCard, deleteCard } from './card.js';
+import { createCard, likeCard, deleteCard } from './card.js';
 import { openModal, closeModal } from './modal.js';
 import { initialCards } from './cards.js';
 
@@ -22,9 +22,26 @@ const inputPlace = document.querySelector('.popup__input_type_card-name');
 const inputLink = document.querySelector('.popup__input_type_url');
 const popupAddCard = document.querySelector('.popup_type_new-card');
 
+// Card view popup
+const popupCard = document.querySelector('.popup_type_image');
+const imageBig = document.querySelector('.popup__image');
+const imageCaption = document.querySelector('.popup__caption');
+
+function openCard(evt) {
+  openModal(popupCard);
+  imageBig.src = evt.target.src;
+  imageBig.alt = evt.target.alt;
+  imageCaption.textContent = evt.target.closest('.card').textContent;
+}
+
+cardsContainer.addEventListener('click', (evt) => {
+  if (evt.target.classList.contains('card__image')) {
+    openCard(evt);
+  }
+});
 
 initialCards.forEach((item) => {
-  cardsContainer.append(createCard(cardTemplate, item, openCard, likeCard, deleteCard));
+  cardsContainer.append(createCard(cardTemplate, item, likeCard, deleteCard));
 });
 
 // Edit profile
