@@ -28,4 +28,3 @@ function overlayCrossClose (evt) {
 }
 
 export { openModal, closeModal };
-// export { openModal, closeModal, escapeClose, overlayCrossClose };
