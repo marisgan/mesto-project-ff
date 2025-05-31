@@ -29,6 +29,18 @@
   padding: 5px;
 }
 
+.popup__error {
+  display: block;
+  position: absolute;
+  left: 35px;
+  max-width: 360px;
+  box-sizing: border-box;
+  color: #FF0000;
+  font-size: 12px;
+  line-height: 100%;
+  padding: 5px;
+}
+
 @media screen and (max-width: 568px) {
   .popup__title {
     font-size: 12px;

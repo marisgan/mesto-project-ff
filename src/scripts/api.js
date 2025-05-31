@@ -14,10 +14,21 @@ function handleResponse(res, errorText) {
       return reject(`${errorText}: ${res.status}`);
     }
   })
-    .catch((err) => {
-      console.log(err);
-    });
   }
+
+
+function validateImageUrl(url) {
+  return fetch(url, {
+    method: 'HEAD'
+  })
+    .then ((res) => {
+      const contentType = res.headers.get('Content-Type');
+      if (res.ok && contentType && contentType.startsWith('image/')) {
+        return true;
+      }
+      return Promise.reject(new Error(`URL не подходит: ${res.status}`));
+    });
+}
 
 
 function getInitialCards() {
@@ -108,5 +119,5 @@ function updateAvatar(link) {
 export {
   getInitialCards, getUserInfo, updateProfile,
   addNewCard, deleteCardApi, likeCardApi, unlikeCardApi,
-  updateAvatar
+  updateAvatar, validateImageUrl
 };

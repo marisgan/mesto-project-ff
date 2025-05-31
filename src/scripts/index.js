@@ -4,7 +4,8 @@ import { openModal, closeModal } from './modal.js';
 import { enableValidation, clearValidation } from './validation.js';
 import {
   getInitialCards, getUserInfo, updateProfile, addNewCard,
-  deleteCardApi, updateAvatar, likeCardApi, unlikeCardApi
+  deleteCardApi, updateAvatar, likeCardApi, unlikeCardApi,
+  validateImageUrl
 } from './api.js';
 
 const cardsContainer = document.querySelector('.places__list');
@@ -66,6 +67,15 @@ function openCard(evt) {
   imageCaption.textContent = evt.target.closest('.card').textContent;
 }
 
+function renderError(errorText, popupElement) {
+  const errorElement = popupElement.querySelector('.popup__error');
+  errorElement.textContent = errorText;
+}
+
+function clearError(popupElement) {
+  const errorElement = popupElement.querySelector('.popup__error');
+  errorElement.textContent = '';
+}
 
 function deleteCard(evtIcon, cardId, popupConfirm, confirmForm) {
   openModal(popupConfirm);
@@ -76,7 +86,7 @@ function deleteCard(evtIcon, cardId, popupConfirm, confirmForm) {
         closeModal(popupConfirm);
         renderDelete(evtIcon);
       })
-      .catch((err) => console.log(err));
+      .catch(err => renderError(err, popupConfirm));
   })
 }
 
@@ -121,6 +131,7 @@ editProfileButton.addEventListener('click', () => {
   inputName.value = profileName.textContent;
   inputJob.value = profileJob.textContent;
   clearValidation(profileForm, validationConfig);
+  clearError(popupEditProfile);
 });
 
 profileForm.addEventListener('submit', (evt) => {
@@ -132,9 +143,7 @@ profileForm.addEventListener('submit', (evt) => {
       profileJob.textContent = userObject.about;
       closeModal(popupEditProfile);
     })
-    .catch((err) => {
-      console.log(err);
-    })
+    .catch(err => renderError(err, popupEditProfile))
     .finally(() => renderLoading(false, submitProfile));
 });
 
@@ -142,28 +151,36 @@ profileForm.addEventListener('submit', (evt) => {
 profileImage.addEventListener('click', (evt) => {
   openModal(popupAvatar);
   clearValidation(avatarForm, validationConfig);
+  clearError(popupAvatar);
   inputAvatar.value = '';
 });
 
 avatarForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   renderLoading(true, submitAvatar);
-  updateAvatar(inputAvatar.value)
+
+  validateImageUrl(inputAvatar.value)
+    .then(() => {
+      return updateAvatar(inputAvatar.value);
+    })
     .then((data) => {
       profileImage.style = `background-image: url(${data.avatar})`;
       closeModal(popupAvatar);
     })
     .catch((err) => {
-      console.log(err);
+      renderError(err.message || 'Ошибка сети', popupAvatar);
     })
-    .finally(() => renderLoading(false, submitAvatar));
-})
+    .finally(() => {
+      renderLoading(false, submitAvatar);
+    })
+});
 
 // Add new card
 
 addButton.addEventListener('click', () => {
   openModal(popupAddCard);
   clearValidation(addForm, validationConfig);
+  clearError(popupAddCard);
   inputPlace.value = '';
   inputLink.value = '';
 });
@@ -183,8 +200,6 @@ addForm.addEventListener('submit', (evt) => {
       closeModal(popupAddCard);
       addForm.reset();
     })
-    .catch((err) => {
-      console.log(err);
-    })
+    .catch(err => renderError(err, popupAddCard))
     .finally(() => renderLoading(false, submitNewCard));
 });

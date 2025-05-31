@@ -12,6 +12,7 @@
   border: none;
   transition: visibility 0s, background 0.3s;
   margin-top: 48px;
+  margin-bottom: 5px;
 }
 
 .popup__button_disabled {
