@@ -1,6 +1,7 @@
-import { deleteCardApi, likeCardApi, unlikeCardApi } from './api.js';
-
 const cardTemplate = document.querySelector('#card-template').content;
+const popupConfirm = document.querySelector('.popup_type_confirm');
+const confirmForm = document.querySelector('.popup_type_confirm form');
+
 
 function createCard(cardData, isOwn, isLiked, openCard, likeCard, deleteCard) {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
@@ -19,58 +20,33 @@ function createCard(cardData, isOwn, isLiked, openCard, likeCard, deleteCard) {
     openCard(evt);
   });
 
+  if (!isOwn) {
+    cardDeleteButton.style = 'display: none';
+  } else {
+    cardDeleteButton.addEventListener('click', (evt) => {
+    deleteCard(evt, cardData._id, popupConfirm, confirmForm)
+    });
+  }
+
   if (isLiked) {
     cardLikeButton.classList.add('card__like-button_is-active');
   }
-  if (!isOwn) {
-    cardDeleteButton.style = 'display: none';
-  }
-
-  cardDeleteButton.addEventListener('click', (evt) => {
-    handleDelete(evt, cardData);
-    });
-
   cardLikeButton.addEventListener('click', (evt) => {
-    handleLike(evt, cardLikeButton, cardData, cardLikesNumber);
+    likeCard(evt, cardLikeButton, cardData, cardLikesNumber);
   });
-
 
   return cardElement;
 }
 
-function likeCard(evt) {
+
+function renderLike(evt) {
   evt.target.classList.toggle('card__like-button_is-active');
 }
 
-function deleteCard(evt) {
+function renderDelete(evt) {
   const cardToDelete = evt.target.closest('.card');
   cardToDelete.remove();
 }
 
-function handleLike(evt, cardLikeButton, cardData, cardLikesNumber) {
-  if (cardLikeButton.classList.contains('card__like-button_is-active')) {
-    unlikeCardApi(cardData._id)
-      .then((data) => {
-        cardLikesNumber.textContent = data.likes.length;
-        likeCard(evt);
-    })
-  } else {
-    likeCardApi(cardData._id)
-      .then((data) => {
-        cardLikesNumber.textContent = data.likes.length
-        likeCard(evt);
-    })
-  }
-}
 
-function handleDelete(evt, cardData) {
-  deleteCardApi(cardData._id)
-    .then((res) => {
-      deleteCard(evt);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-}
-
-export { createCard, likeCard, deleteCard };
+export { createCard, renderDelete, renderLike };

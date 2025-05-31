@@ -6,17 +6,27 @@ const config = {
   }
 }
 
+function handleResponse(res, errorText) {
+  return new Promise((resolve, reject) => {
+    if (res.ok) {
+      return resolve(res.json());
+    } else {
+      return reject(`${errorText}: ${res.status}`);
+    }
+  })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+
 
 function getInitialCards() {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-  });
+    .then(res => handleResponse(
+      res, 'Что-то пошло не так при запросе данных о карточках'
+    ));
 }
 
 
@@ -24,12 +34,9 @@ function getUserInfo() {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
+    .then(res => handleResponse(
+      res, 'Что-то пошло не так при запросе данных о пользователе'
+    ));
 }
 
 
@@ -42,12 +49,9 @@ function updateProfile(newName, newJob) {
       about: newJob
     })
   })
-  .then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => handleResponse(
+    res, 'Что-то пошло не так при обновлении данных профиля'
+  ));
 }
 
 
@@ -60,12 +64,7 @@ function addNewCard(newName, newLink) {
       link: newLink
     })
   })
-  .then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => handleResponse(res, 'Что-то пошло не так при добавлении карточки'));
 }
 
 
@@ -74,12 +73,7 @@ function deleteCardApi(cardId) {
     method: 'DELETE',
     headers: config.headers
   })
-  .then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => handleResponse(res, 'Что-то пошло не так при удалении карточки'));
 }
 
 
@@ -88,12 +82,7 @@ function likeCardApi(cardId) {
     method: 'PUT',
     headers: config.headers
   })
-  .then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => handleResponse(res, 'Что-то пошло не так при установке лайка'));
 }
 
 
@@ -102,12 +91,7 @@ function unlikeCardApi(cardId) {
     method: 'DELETE',
     headers: config.headers
   })
-  .then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => handleResponse(res, 'Что-то пошло не так при снятии лайка'));
 }
 
 
@@ -117,12 +101,7 @@ function updateAvatar(link) {
     headers: config.headers,
     body: JSON.stringify({avatar: link})
   })
-  .then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => handleResponse(res, 'Что-то пошло не так при изменении аватарки профиля'));
 }
 
 

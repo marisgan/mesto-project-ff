@@ -1,10 +1,10 @@
 import '../pages/index.css';
-import { createCard, likeCard, deleteCard } from './card.js';
+import { createCard, renderDelete, renderLike } from './card.js';
 import { openModal, closeModal } from './modal.js';
 import { enableValidation, clearValidation } from './validation.js';
 import {
   getInitialCards, getUserInfo, updateProfile, addNewCard,
-  deleteCardApi, updateAvatar
+  deleteCardApi, updateAvatar, likeCardApi, unlikeCardApi
 } from './api.js';
 
 const cardsContainer = document.querySelector('.places__list');
@@ -64,6 +64,37 @@ function openCard(evt) {
   imageBig.src = evt.target.src;
   imageBig.alt = evt.target.alt;
   imageCaption.textContent = evt.target.closest('.card').textContent;
+}
+
+
+function deleteCard(evtIcon, cardId, popupConfirm, confirmForm) {
+  openModal(popupConfirm);
+  confirmForm.addEventListener('submit', (evtConfirm) => {
+    evtConfirm.preventDefault();
+    deleteCardApi(cardId)
+      .then(() => {
+        closeModal(popupConfirm);
+        renderDelete(evtIcon);
+      })
+      .catch((err) => console.log(err));
+  })
+}
+
+
+function likeCard(evt, cardLikeButton, cardData, cardLikesNumber) {
+  if (cardLikeButton.classList.contains('card__like-button_is-active')) {
+    unlikeCardApi(cardData._id)
+      .then((data) => {
+        cardLikesNumber.textContent = data.likes.length;
+        renderLike(evt);
+    })
+  } else {
+    likeCardApi(cardData._id)
+      .then((data) => {
+        cardLikesNumber.textContent = data.likes.length
+        renderLike(evt);
+    })
+  }
 }
 
 enableValidation(validationConfig);
