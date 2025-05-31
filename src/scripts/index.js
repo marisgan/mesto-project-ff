@@ -150,9 +150,9 @@ profileForm.addEventListener('submit', (evt) => {
 
 profileImage.addEventListener('click', (evt) => {
   openModal(popupAvatar);
-  clearValidation(avatarForm, validationConfig);
   clearError(popupAvatar);
   inputAvatar.value = '';
+  clearValidation(avatarForm, validationConfig);
 });
 
 avatarForm.addEventListener('submit', (evt) => {
@@ -168,7 +168,11 @@ avatarForm.addEventListener('submit', (evt) => {
       closeModal(popupAvatar);
     })
     .catch((err) => {
-      renderError(err.message || 'Ошибка сети', popupAvatar);
+      if (err instanceof TypeError && err.message === 'Failed to fetch') {
+        renderError('Ошибка сети или блокировка CORS. Проверьте URL.', popupAvatar);
+      } else {
+        renderError(err.message || 'Произошла неизвестная ошибка', popupAvatar);
+      }
     })
     .finally(() => {
       renderLoading(false, submitAvatar);

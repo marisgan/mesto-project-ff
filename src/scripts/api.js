@@ -26,7 +26,7 @@ function validateImageUrl(url) {
       if (res.ok && contentType && contentType.startsWith('image/')) {
         return true;
       }
-      return Promise.reject(new Error(`URL не подходит: ${res.status}`));
+      throw new Error(`URL не подходит: ${res.status}`);
     });
 }
 
