@@ -5,7 +5,7 @@ import { enableValidation, clearValidation } from './validation.js';
 import {
   getInitialCards, getUserInfo, updateProfile, addNewCard,
   deleteCardApi, updateAvatar, likeCardApi, unlikeCardApi,
-  validateImageUrl
+  checkImageUrl
 } from './api.js';
 
 const cardsContainer = document.querySelector('.places__list');
@@ -159,7 +159,7 @@ avatarForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   renderLoading(true, submitAvatar);
 
-  validateImageUrl(inputAvatar.value)
+  checkImageUrl(inputAvatar.value)
     .then(() => {
       return updateAvatar(inputAvatar.value);
     })

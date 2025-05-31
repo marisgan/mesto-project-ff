@@ -17,7 +17,7 @@ function handleResponse(res, errorText) {
   }
 
 
-function validateImageUrl(url) {
+function checkImageUrl(url) {
   return fetch(url, {
     method: 'HEAD'
   })
@@ -119,5 +119,5 @@ function updateAvatar(link) {
 export {
   getInitialCards, getUserInfo, updateProfile,
   addNewCard, deleteCardApi, likeCardApi, unlikeCardApi,
-  updateAvatar, validateImageUrl
+  updateAvatar, checkImageUrl
 };
