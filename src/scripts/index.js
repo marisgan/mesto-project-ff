@@ -1,11 +1,10 @@
 import '../pages/index.css';
-import { createCard, renderDelete, renderLike } from './card.js';
+import { createCard, renderDelete, likeCard } from './card.js';
 import { openModal, closeModal } from './modal.js';
 import { enableValidation, clearValidation } from './validation.js';
 import {
   getInitialCards, getUserInfo, updateProfile, addNewCard,
-  deleteCardApi, updateAvatar, likeCardApi, unlikeCardApi,
-  checkImageUrl
+  deleteCardApi, updateAvatar, checkImageUrl
 } from './api.js';
 
 const cardsContainer = document.querySelector('.places__list');
@@ -37,6 +36,10 @@ const submitNewCard = popupAddCard.querySelector('.popup__button');
 const popupCard = document.querySelector('.popup_type_image');
 const imageBig = document.querySelector('.popup__image');
 const imageCaption = document.querySelector('.popup__caption');
+
+// Confirm popup
+const popupConfirm = document.querySelector('.popup_type_confirm');
+const confirmForm = document.querySelector('.popup_type_confirm form');
 
 
 // Validation
@@ -72,14 +75,9 @@ function renderError(errorText, popupElement) {
   errorElement.textContent = errorText;
 }
 
-function clearError(popupElement) {
-  const errorElement = popupElement.querySelector('.popup__error');
-  errorElement.textContent = '';
-}
-
-function deleteCard(evtIcon, cardId, popupConfirm, confirmForm) {
+function deleteCard(evtIcon, cardId) {
   openModal(popupConfirm);
-  confirmForm.addEventListener('submit', (evtConfirm) => {
+  confirmForm.onsubmit = (evtConfirm) => {
     evtConfirm.preventDefault();
     deleteCardApi(cardId)
       .then(() => {
@@ -87,23 +85,6 @@ function deleteCard(evtIcon, cardId, popupConfirm, confirmForm) {
         renderDelete(evtIcon);
       })
       .catch(err => renderError(err, popupConfirm));
-  })
-}
-
-
-function likeCard(evt, cardLikeButton, cardData, cardLikesNumber) {
-  if (cardLikeButton.classList.contains('card__like-button_is-active')) {
-    unlikeCardApi(cardData._id)
-      .then((data) => {
-        cardLikesNumber.textContent = data.likes.length;
-        renderLike(evt);
-    })
-  } else {
-    likeCardApi(cardData._id)
-      .then((data) => {
-        cardLikesNumber.textContent = data.likes.length
-        renderLike(evt);
-    })
   }
 }
 
@@ -131,7 +112,6 @@ editProfileButton.addEventListener('click', () => {
   inputName.value = profileName.textContent;
   inputJob.value = profileJob.textContent;
   clearValidation(profileForm, validationConfig);
-  clearError(popupEditProfile);
 });
 
 profileForm.addEventListener('submit', (evt) => {
@@ -147,10 +127,8 @@ profileForm.addEventListener('submit', (evt) => {
     .finally(() => renderLoading(false, submitProfile));
 });
 
-
 profileImage.addEventListener('click', (evt) => {
   openModal(popupAvatar);
-  clearError(popupAvatar);
   inputAvatar.value = '';
   clearValidation(avatarForm, validationConfig);
 });
@@ -184,9 +162,7 @@ avatarForm.addEventListener('submit', (evt) => {
 addButton.addEventListener('click', () => {
   openModal(popupAddCard);
   clearValidation(addForm, validationConfig);
-  clearError(popupAddCard);
-  inputPlace.value = '';
-  inputLink.value = '';
+  addForm.reset();
 });
 
 addForm.addEventListener('submit', (evt) => {

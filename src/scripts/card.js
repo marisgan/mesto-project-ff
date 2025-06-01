@@ -1,6 +1,6 @@
+import { likeCardApi, unlikeCardApi } from './api.js';
+
 const cardTemplate = document.querySelector('#card-template').content;
-const popupConfirm = document.querySelector('.popup_type_confirm');
-const confirmForm = document.querySelector('.popup_type_confirm form');
 
 
 function createCard(cardData, isOwn, isLiked, openCard, likeCard, deleteCard) {
@@ -24,7 +24,7 @@ function createCard(cardData, isOwn, isLiked, openCard, likeCard, deleteCard) {
     cardDeleteButton.style = 'display: none';
   } else {
     cardDeleteButton.addEventListener('click', (evt) => {
-    deleteCard(evt, cardData._id, popupConfirm, confirmForm)
+    deleteCard(evt, cardData._id)
     });
   }
 
@@ -38,6 +38,23 @@ function createCard(cardData, isOwn, isLiked, openCard, likeCard, deleteCard) {
   return cardElement;
 }
 
+function likeCard(evt, cardLikeButton, cardData, cardLikesNumber) {
+  if (cardLikeButton.classList.contains('card__like-button_is-active')) {
+    unlikeCardApi(cardData._id)
+      .then((data) => {
+        cardLikesNumber.textContent = data.likes.length;
+        renderLike(evt);
+      })
+      .catch(err => console.log(err));
+  } else {
+    likeCardApi(cardData._id)
+      .then((data) => {
+        cardLikesNumber.textContent = data.likes.length
+        renderLike(evt);
+      })
+      .catch(err => console.log(err));
+  }
+}
 
 function renderLike(evt) {
   evt.target.classList.toggle('card__like-button_is-active');
@@ -48,5 +65,4 @@ function renderDelete(evt) {
   cardToDelete.remove();
 }
 
-
-export { createCard, renderDelete, renderLike };
+export { createCard, likeCard, renderDelete };
