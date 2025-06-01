@@ -6,16 +6,79 @@ const config = {
   }
 }
 
-function handleResponse(res, errorText) {
-  return new Promise((resolve, reject) => {
-    if (res.ok) {
-      return resolve(res.json());
-    } else {
-      return reject(`${errorText}: ${res.status}`);
-    }
-  })
-  }
+const paths = {
+  cards: '/cards',
+  me: '/users/me',
+  likes: '/cards/likes',
+  avatar: '/users/me/avatar'
+}
 
+const errorMessages = {
+  cards: 'Не удалось загрузить карточки',
+  me: 'Не удалось получить данные пользователя',
+  patchProfile: 'Не удалось обновить профиль',
+  addCard: 'Не удалось добавить карточку',
+  deleteCard: 'Не удалось удалить карточку',
+  like: 'Не удалось поставить лайк',
+  unlike: 'Не удалось снять лайк',
+  avatar: 'Не удалось изменить аватар профиля'
+}
+
+function apiRequest(method, path, errorMessage, body = null, pathParam = null) {
+  const options = {
+    method: method,
+    headers: config.headers
+  };
+
+  if (pathParam) path = `${path}/${pathParam}`;
+  if (body) options.body = JSON.stringify(body);
+
+  return fetch(`${config.baseUrl}${path}`, options)
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(new Error(`${errorMessage}: ${res.status}`));
+    });
+}
+
+function getInitialCards() {
+  return apiRequest('GET', paths.cards, errorMessages.cards);
+}
+
+function getUserInfo() {
+  return apiRequest('GET', paths.me, errorMessages.me);
+}
+
+function updateProfile(newName, newAbout) {
+  return apiRequest(
+    'PATCH', paths.me, errorMessages.patchProfile,
+    {name: newName, about: newAbout}
+  );
+}
+
+function addNewCard(newName, newLink) {
+  return apiRequest(
+    'POST', paths.cards, errorMessages.addCard,
+    {name: newName, link: newLink}
+  );
+}
+
+function deleteCardApi(cardId) {
+  return apiRequest('DELETE', paths.cards, errorMessages.deleteCard, null, cardId);
+}
+
+function likeCardApi(cardId) {
+  return apiRequest('PUT', paths.likes, errorMessages.like, null, cardId);
+}
+
+function unlikeCardApi(cardId) {
+  return apiRequest('DELETE', paths.likes, errorMessages.unlike, null, cardId);
+}
+
+function updateAvatar(link) {
+  return apiRequest('PATCH', paths.avatar, errorMessages.avatar, {avatar: link});
+}
 
 function checkImageUrl(url) {
   return fetch(url, {
@@ -29,92 +92,6 @@ function checkImageUrl(url) {
       throw new Error(`URL не подходит: ${res.status}`);
     });
 }
-
-
-function getInitialCards() {
-  return fetch(`${config.baseUrl}/cards`, {
-    headers: config.headers
-  })
-    .then(res => handleResponse(
-      res, 'Что-то пошло не так при запросе данных о карточках'
-    ));
-}
-
-
-function getUserInfo() {
-  return fetch(`${config.baseUrl}/users/me`, {
-    headers: config.headers
-  })
-    .then(res => handleResponse(
-      res, 'Что-то пошло не так при запросе данных о пользователе'
-    ));
-}
-
-
-function updateProfile(newName, newJob) {
-  return fetch(`${config.baseUrl}/users/me`, {
-    method: 'PATCH',
-    headers: config.headers,
-    body: JSON.stringify({
-      name: newName,
-      about: newJob
-    })
-  })
-  .then(res => handleResponse(
-    res, 'Что-то пошло не так при обновлении данных профиля'
-  ));
-}
-
-
-function addNewCard(newName, newLink) {
-  return fetch(`${config.baseUrl}/cards`, {
-    method: 'POST',
-    headers: config.headers,
-    body: JSON.stringify({
-      name: newName,
-      link: newLink
-    })
-  })
-  .then(res => handleResponse(res, 'Что-то пошло не так при добавлении карточки'));
-}
-
-
-function deleteCardApi(cardId) {
-  return fetch(`${config.baseUrl}/cards/${cardId}`, {
-    method: 'DELETE',
-    headers: config.headers
-  })
-  .then(res => handleResponse(res, 'Что-то пошло не так при удалении карточки'));
-}
-
-
-function likeCardApi(cardId) {
-  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-    method: 'PUT',
-    headers: config.headers
-  })
-  .then(res => handleResponse(res, 'Что-то пошло не так при установке лайка'));
-}
-
-
-function unlikeCardApi(cardId) {
-  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-    method: 'DELETE',
-    headers: config.headers
-  })
-  .then(res => handleResponse(res, 'Что-то пошло не так при снятии лайка'));
-}
-
-
-function updateAvatar(link) {
-  return fetch(`${config.baseUrl}/users/me/avatar`, {
-    method: 'PATCH',
-    headers: config.headers,
-    body: JSON.stringify({avatar: link})
-  })
-  .then(res => handleResponse(res, 'Что-то пошло не так при изменении аватарки профиля'));
-}
-
 
 export {
   getInitialCards, getUserInfo, updateProfile,
