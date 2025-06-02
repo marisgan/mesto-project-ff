@@ -1,6 +1,4 @@
 function openModal(element) {
-  const responseError = element.querySelector('.popup__error')
-  responseError.textContent = '';
   element.classList.add('popup_is-opened');
   document.addEventListener('keydown', escapeClose);
   element.addEventListener('click', overlayCrossClose);

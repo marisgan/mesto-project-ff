@@ -72,5 +72,10 @@ function clearValidation(formElement, validationConfig) {
   inputList.forEach(inputElement => hideInputError(formElement, inputElement, validationConfig));
 }
 
+function clearResponseError(popupElement) {
+  const responseError = popupElement.querySelector('.popup__error')
+  responseError.textContent = '';
+}
 
-export { enableValidation, clearValidation };
+
+export { enableValidation, clearValidation, clearResponseError };

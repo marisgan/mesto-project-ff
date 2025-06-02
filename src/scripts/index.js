@@ -1,7 +1,7 @@
 import '../pages/index.css';
 import { createCard, renderDelete, likeCard } from './card.js';
 import { openModal, closeModal } from './modal.js';
-import { enableValidation, clearValidation } from './validation.js';
+import { enableValidation, clearValidation, clearResponseError } from './validation.js';
 import {
   getInitialCards, getUserInfo, updateProfile, addNewCard,
   deleteCardApi, updateAvatar, checkImageUrl
@@ -77,6 +77,7 @@ function renderError(errorText, popupElement) {
 
 function deleteCard(evtIcon, cardId) {
   openModal(popupConfirm);
+  clearResponseError(popupConfirm);
   confirmForm.onsubmit = (evtConfirm) => {
     evtConfirm.preventDefault();
     deleteCardApi(cardId)
@@ -112,6 +113,7 @@ editProfileButton.addEventListener('click', () => {
   inputName.value = profileName.textContent;
   inputJob.value = profileJob.textContent;
   clearValidation(profileForm, validationConfig);
+  clearResponseError(popupEditProfile);
 });
 
 profileForm.addEventListener('submit', (evt) => {
@@ -131,6 +133,7 @@ profileImage.addEventListener('click', (evt) => {
   openModal(popupAvatar);
   inputAvatar.value = '';
   clearValidation(avatarForm, validationConfig);
+  clearResponseError(popupAvatar);
 });
 
 avatarForm.addEventListener('submit', (evt) => {
@@ -162,6 +165,7 @@ avatarForm.addEventListener('submit', (evt) => {
 addButton.addEventListener('click', () => {
   openModal(popupAddCard);
   clearValidation(addForm, validationConfig);
+  clearResponseError(popupAddCard);
   addForm.reset();
 });
 
